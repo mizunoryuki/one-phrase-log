@@ -1,11 +1,28 @@
 services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=one_phrase_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/posgresql/data
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    depends_on:
+      - db
     volumes:
       - ./backend:/app
     environment:
-      - GO_ENV=development
+      - DB_HOST=db
+      - DB_USER=user 
+      - DB_PASSWORD=password
+      - DB_NAME=one_phrase_db
+      - DB_PORT=5432
