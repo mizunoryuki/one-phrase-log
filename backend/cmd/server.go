@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	database "one-phrase-log/db"
 	"one-phrase-log/graph"
 	"os"
 
@@ -13,6 +14,10 @@ import (
 const defaultPort = "8080"
 
 func main() {
+
+	database.InitDB()
+	database.Migrate()
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort

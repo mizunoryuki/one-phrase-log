@@ -13,6 +13,7 @@ import (
 var Db *gorm.DB
 
 func InitDB() {
+	log.Println("initialize DB")
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Tokyo",
 		os.Getenv("DB_HOST"),
@@ -35,7 +36,7 @@ func InitDB() {
 	if err != nil {
 		log.Fatal("faild to connect DB:",err)
 	}
-	log.Printf("successfuly to connect DB")
+	log.Printf("successfuly connected to DB")
 }
 
 type Snippet struct {
@@ -46,5 +47,10 @@ type Snippet struct {
 }
 
 func Migrate() {
-	Db.AutoMigrate(&Snippet{})
+	err := Db.AutoMigrate(&Snippet{})
+	if err != nil {
+		log.Printf("failed to migrate: %v",err)
+	}else {
+		log.Printf("successfuly connected to DB")
+	}
 }
