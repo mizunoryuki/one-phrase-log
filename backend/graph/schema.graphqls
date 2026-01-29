@@ -2,27 +2,26 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Todo {
+type Snippet {
   id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
+  content: String!
+  isArchived: Boolean!
+  createdAt: String!
 }
 
-type User {
-  id: ID!
-  name: String!
-}
-
+# データの一覧取得
 type Query {
-  todos: [Todo!]!
+  snippets: [Snippet!]!
 }
 
-input NewTodo {
-  text: String!
-  userId: String!
-}
-
+# データ操作系
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  # 新規作成
+  createSnippet(content: String!): Snippet!
+
+  # 内容の編集
+  updateSnippet(id: ID!, content: String!): Snippet!
+
+  # アーカイブ状態を切り替える
+  toggleArchive(id: ID!): Snippet!
 }

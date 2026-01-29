@@ -11,14 +11,24 @@ import (
 	"one-phrase-log/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// CreateSnippet is the resolver for the createSnippet field.
+func (r *mutationResolver) CreateSnippet(ctx context.Context, content string) (*model.Snippet, error) {
+	panic(fmt.Errorf("not implemented: CreateSnippet - createSnippet"))
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// UpdateSnippet is the resolver for the updateSnippet field.
+func (r *mutationResolver) UpdateSnippet(ctx context.Context, id string, content string) (*model.Snippet, error) {
+	panic(fmt.Errorf("not implemented: UpdateSnippet - updateSnippet"))
+}
+
+// ToggleArchive is the resolver for the toggleArchive field.
+func (r *mutationResolver) ToggleArchive(ctx context.Context, id string) (*model.Snippet, error) {
+	panic(fmt.Errorf("not implemented: ToggleArchive - toggleArchive"))
+}
+
+// Snippets is the resolver for the snippets field.
+func (r *queryResolver) Snippets(ctx context.Context) ([]*model.Snippet, error) {
+	panic(fmt.Errorf("not implemented: Snippets - snippets"))
 }
 
 // Mutation returns MutationResolver implementation.
