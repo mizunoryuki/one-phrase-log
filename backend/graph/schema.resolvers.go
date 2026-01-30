@@ -8,12 +8,30 @@ package graph
 import (
 	"context"
 	"fmt"
+	database "one-phrase-log/db"
 	"one-phrase-log/graph/model"
 )
 
 // CreateSnippet is the resolver for the createSnippet field.
 func (r *mutationResolver) CreateSnippet(ctx context.Context, content string) (*model.Snippet, error) {
-	panic(fmt.Errorf("not implemented: CreateSnippet - createSnippet"))
+
+	// DBモデルの作成
+	newSnippet := &database.Snippet{
+		Content: content,
+		IsArchived: false,
+	}
+
+	// DBに保存
+	if err := database.Db.Create(newSnippet).Error; err != nil {
+		return nil,err
+	}
+	
+	return &model.Snippet{
+		ID: fmt.Sprintf("%d",newSnippet.ID),
+		Content: newSnippet.Content,
+		IsArchived: newSnippet.IsArchived,
+		CreatedAt: newSnippet.CreatedAt.Format("2006-01-02 15:04:05"),
+	},nil
 }
 
 // UpdateSnippet is the resolver for the updateSnippet field.
