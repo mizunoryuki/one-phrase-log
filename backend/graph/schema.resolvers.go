@@ -64,7 +64,22 @@ func (r *mutationResolver) ToggleArchive(ctx context.Context, id string) (*model
 
 // Snippets is the resolver for the snippets field.
 func (r *queryResolver) Snippets(ctx context.Context) ([]*model.Snippet, error) {
-	panic(fmt.Errorf("not implemented: Snippets - snippets"))
+	var dbSnippets []database.Snippet
+
+	if err:= database.Db.Order("created_at desc").Find(&dbSnippets).Error; err !=nil  {
+		return nil,err
+	}
+
+	var snippets []*model.Snippet
+	for _,s := range dbSnippets {
+		snippets = append(snippets, &model.Snippet{
+			ID:fmt.Sprintf("%d",s.ID),
+			Content: s.Content,
+			IsArchived: s.IsArchived,
+			CreatedAt: s.CreatedAt.Format("2006-01-02 15:04:05"),
+		})
+	}
+	return snippets,nil
 }
 
 // Mutation returns MutationResolver implementation.
