@@ -1,6 +1,7 @@
+import { useState } from "react";
 import "./App.css";
-import {  graphql } from './gql';
-import { useQuery } from "@apollo/client/react";
+import { graphql } from "./gql";
+import { useMutation, useQuery } from "@apollo/client/react";
 
 const GET_SNIPPETS = graphql(`
   query GetSnippets {
@@ -12,21 +13,67 @@ const GET_SNIPPETS = graphql(`
   }
 `);
 
+const CREATE_SNIPPET = graphql(`
+  mutation CreateSnippet($content: String!) {
+    createSnippet(content: $content) {
+      id
+      content
+      createdAt
+    }
+  }
+`);
+
 function App() {
-  const { loading, error, data} = useQuery(GET_SNIPPETS);
+  const [inputText, setInputText] = useState("");
+  const { loading, error, data } = useQuery(GET_SNIPPETS);
+  const [createSnippet, { loading: isSubmitting }] =
+    useMutation(CREATE_SNIPPET);
+
+  const handleSubimit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+    try {
+      await createSnippet({
+        variables: { content: inputText },
+        refetchQueries: [GET_SNIPPETS], // 投稿後に再取得して最新にする
+      });
+      setInputText("");
+    } catch (err) {
+      console.error("投稿エラー:", err);
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
   if (!data) return <p>No data found</p>;
 
   return (
-    <div>
-      {data.snippets.map((snippet) => (
-        <div key={snippet.id}>
-          <p>{snippet.content}</p>
-        </div>
-      ))}
-    </div>
-  )
+    <>
+      <form onSubmit={handleSubimit}>
+        <textarea
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          rows={4}
+          cols={50}
+          placeholder="Type your snippet here..."
+        />
+        <br />
+        <button
+          type="submit"
+          disabled={isSubmitting || Boolean(!inputText.trim())}
+        >
+          {isSubmitting ? "送信中" : "送信"}
+        </button>
+      </form>
+      <div>
+        {data.snippets.map((snippet) => (
+          <div key={snippet.id}>
+            <p>{snippet.content}</p>
+          </div>
+        ))}
+      </div>
+    </>
+  );
 }
 
 export default App;
