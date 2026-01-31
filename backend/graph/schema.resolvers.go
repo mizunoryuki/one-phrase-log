@@ -59,7 +59,27 @@ func (r *mutationResolver) UpdateSnippet(ctx context.Context, id string, content
 
 // ToggleArchive is the resolver for the toggleArchive field.
 func (r *mutationResolver) ToggleArchive(ctx context.Context, id string) (*model.Snippet, error) {
-	panic(fmt.Errorf("not implemented: ToggleArchive - toggleArchive"))
+	var snippet database.Snippet
+
+	// idからデータを取得
+	if err := database.Db.First(&snippet, id).Error; err != nil {
+		return nil, fmt.Errorf("snippet not found: %w", err)
+	}
+
+	// Toggle
+	snippet.IsArchived = !snippet.IsArchived
+
+	// DBに保存
+	if err := database.Db.Save(&snippet).Error; err != nil {
+		return nil,err
+	}
+
+	return &model.Snippet{
+		ID:fmt.Sprintf("%d",snippet.ID),
+		Content: snippet.Content,
+		IsArchived: snippet.IsArchived,
+		CreatedAt: snippet.CreatedAt.Format("2006-01-02 15:04:05"),
+	},nil
 }
 
 // Snippets is the resolver for the snippets field.
