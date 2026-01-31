@@ -38,7 +38,8 @@ function App() {
   const { loading, error, data } = useQuery(GET_SNIPPETS);
   const [createSnippet, { loading: isSubmitting }] =
     useMutation(CREATE_SNIPPET);
-  const [toggleIsArchived] = useMutation(TOGGLE_IS_ARCHIVED);
+  const [toggleIsArchived, { loading: isToggling }] =
+    useMutation(TOGGLE_IS_ARCHIVED);
   const handleSubimit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim()) return;
@@ -56,7 +57,6 @@ function App() {
   const handleToggleArchive = (id: string) => {
     toggleIsArchived({
       variables: { id },
-      refetchQueries: [GET_SNIPPETS],
     });
   };
 
@@ -89,6 +89,10 @@ function App() {
           <div key={snippet.id} style={{ display: "flex" }}>
             <p>{snippet.content}</p>
             <input
+              style={{
+                cursor: isToggling ? "not-allowed" : "pointer",
+              }}
+              disabled={isToggling}
               id={`archive-${snippet.id}`}
               name={`archive-${snippet.id}`}
               type="checkbox"
