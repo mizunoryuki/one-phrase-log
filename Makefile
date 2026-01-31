@@ -10,3 +10,5 @@ schema-generate:
 	docker exec one-phrase-log-backend-1 go run github.com/99designs/gqlgen generate
 mod-tidy:
 	docker exec one-phrase-log-backend-1 go mod tidy
+test:
+	docker exec one-phrase-log-backend-1 go test -v ./graph/...
