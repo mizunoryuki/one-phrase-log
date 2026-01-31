@@ -9,6 +9,7 @@ const GET_SNIPPETS = graphql(`
       id
       content
       createdAt
+      isArchived
     }
   }
 `);
@@ -23,12 +24,21 @@ const CREATE_SNIPPET = graphql(`
   }
 `);
 
+const TOGGLE_IS_ARCHIVED = graphql(`
+  mutation ToggleIsArchived($id: ID!) {
+    toggleArchive(id: $id) {
+      id
+      isArchived
+    }
+  }
+`);
+
 function App() {
   const [inputText, setInputText] = useState("");
   const { loading, error, data } = useQuery(GET_SNIPPETS);
   const [createSnippet, { loading: isSubmitting }] =
     useMutation(CREATE_SNIPPET);
-
+  const [toggleIsArchived] = useMutation(TOGGLE_IS_ARCHIVED);
   const handleSubimit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim()) return;
@@ -43,6 +53,13 @@ function App() {
     }
   };
 
+  const handleToggleArchive = (id: string) => {
+    toggleIsArchived({
+      variables: { id },
+      refetchQueries: [GET_SNIPPETS],
+    });
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
   if (!data) return <p>No data found</p>;
@@ -51,6 +68,7 @@ function App() {
     <>
       <form onSubmit={handleSubimit}>
         <textarea
+          id="input-area"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           rows={4}
@@ -59,6 +77,7 @@ function App() {
         />
         <br />
         <button
+          id="submit-button"
           type="submit"
           disabled={isSubmitting || Boolean(!inputText.trim())}
         >
@@ -67,8 +86,15 @@ function App() {
       </form>
       <div>
         {data.snippets.map((snippet) => (
-          <div key={snippet.id}>
+          <div key={snippet.id} style={{ display: "flex" }}>
             <p>{snippet.content}</p>
+            <input
+              id={`archive-${snippet.id}`}
+              name={`archive-${snippet.id}`}
+              type="checkbox"
+              checked={snippet.isArchived}
+              onChange={() => handleToggleArchive(snippet.id)}
+            />
           </div>
         ))}
       </div>

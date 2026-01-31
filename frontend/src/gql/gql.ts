@@ -14,12 +14,14 @@ import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
 type Documents = {
-    "\n  query GetSnippets {\n    snippets {\n      id\n      content\n      createdAt\n    }\n  }\n": typeof types.GetSnippetsDocument,
+    "\n  query GetSnippets {\n    snippets {\n      id\n      content\n      createdAt\n      isArchived\n    }\n  }\n": typeof types.GetSnippetsDocument,
     "\n  mutation CreateSnippet($content: String!) {\n    createSnippet(content: $content) {\n      id\n      content\n      createdAt\n    }\n  }\n": typeof types.CreateSnippetDocument,
+    "\n  mutation ToggleIsArchived($id: ID!) {\n    toggleArchive(id: $id) {\n      id\n      isArchived\n    }\n  }\n": typeof types.ToggleIsArchivedDocument,
 };
 const documents: Documents = {
-    "\n  query GetSnippets {\n    snippets {\n      id\n      content\n      createdAt\n    }\n  }\n": types.GetSnippetsDocument,
+    "\n  query GetSnippets {\n    snippets {\n      id\n      content\n      createdAt\n      isArchived\n    }\n  }\n": types.GetSnippetsDocument,
     "\n  mutation CreateSnippet($content: String!) {\n    createSnippet(content: $content) {\n      id\n      content\n      createdAt\n    }\n  }\n": types.CreateSnippetDocument,
+    "\n  mutation ToggleIsArchived($id: ID!) {\n    toggleArchive(id: $id) {\n      id\n      isArchived\n    }\n  }\n": types.ToggleIsArchivedDocument,
 };
 
 /**
@@ -39,11 +41,15 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetSnippets {\n    snippets {\n      id\n      content\n      createdAt\n    }\n  }\n"): (typeof documents)["\n  query GetSnippets {\n    snippets {\n      id\n      content\n      createdAt\n    }\n  }\n"];
+export function graphql(source: "\n  query GetSnippets {\n    snippets {\n      id\n      content\n      createdAt\n      isArchived\n    }\n  }\n"): (typeof documents)["\n  query GetSnippets {\n    snippets {\n      id\n      content\n      createdAt\n      isArchived\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation CreateSnippet($content: String!) {\n    createSnippet(content: $content) {\n      id\n      content\n      createdAt\n    }\n  }\n"): (typeof documents)["\n  mutation CreateSnippet($content: String!) {\n    createSnippet(content: $content) {\n      id\n      content\n      createdAt\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation ToggleIsArchived($id: ID!) {\n    toggleArchive(id: $id) {\n      id\n      isArchived\n    }\n  }\n"): (typeof documents)["\n  mutation ToggleIsArchived($id: ID!) {\n    toggleArchive(id: $id) {\n      id\n      isArchived\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
