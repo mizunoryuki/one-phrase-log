@@ -33,6 +33,12 @@ const TOGGLE_IS_ARCHIVED = graphql(`
   }
 `);
 
+const DELETE_SNIPPET = graphql(`
+  mutation DeleteSnippet($id: ID!) {
+    deleteSnippet(id: $id)
+  }
+`);
+
 function App() {
   const [inputText, setInputText] = useState("");
   const { loading, error, data } = useQuery(GET_SNIPPETS);
@@ -40,6 +46,7 @@ function App() {
     useMutation(CREATE_SNIPPET);
   const [toggleIsArchived, { loading: isToggling }] =
     useMutation(TOGGLE_IS_ARCHIVED);
+  const [deleteSnippet, { loading: isDeleting }] = useMutation(DELETE_SNIPPET);
   const handleSubimit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim()) return;
@@ -57,6 +64,13 @@ function App() {
   const handleToggleArchive = (id: string) => {
     toggleIsArchived({
       variables: { id },
+    });
+  };
+
+  const handleDeleteSnippet = (id: string) => {
+    deleteSnippet({
+      variables: { id },
+      refetchQueries: [GET_SNIPPETS],
     });
   };
 
@@ -87,6 +101,7 @@ function App() {
       <div>
         {data.snippets.map((snippet) => (
           <div key={snippet.id} style={{ display: "flex" }}>
+            <p>{snippet.id}</p>
             <p>{snippet.content}</p>
             <input
               style={{
@@ -99,6 +114,12 @@ function App() {
               checked={snippet.isArchived}
               onChange={() => handleToggleArchive(snippet.id)}
             />
+            <button
+              onClick={() => handleDeleteSnippet(snippet.id)}
+              disabled={isDeleting}
+            >
+              削除
+            </button>
           </div>
         ))}
       </div>

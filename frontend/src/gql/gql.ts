@@ -17,11 +17,13 @@ type Documents = {
     "\n  query GetSnippets {\n    snippets {\n      id\n      content\n      createdAt\n      isArchived\n    }\n  }\n": typeof types.GetSnippetsDocument,
     "\n  mutation CreateSnippet($content: String!) {\n    createSnippet(content: $content) {\n      id\n      content\n      createdAt\n    }\n  }\n": typeof types.CreateSnippetDocument,
     "\n  mutation ToggleIsArchived($id: ID!) {\n    toggleArchive(id: $id) {\n      id\n      isArchived\n    }\n  }\n": typeof types.ToggleIsArchivedDocument,
+    "\n  mutation DeleteSnippet($id: ID!) {\n    deleteSnippet(id: $id)\n  }\n": typeof types.DeleteSnippetDocument,
 };
 const documents: Documents = {
     "\n  query GetSnippets {\n    snippets {\n      id\n      content\n      createdAt\n      isArchived\n    }\n  }\n": types.GetSnippetsDocument,
     "\n  mutation CreateSnippet($content: String!) {\n    createSnippet(content: $content) {\n      id\n      content\n      createdAt\n    }\n  }\n": types.CreateSnippetDocument,
     "\n  mutation ToggleIsArchived($id: ID!) {\n    toggleArchive(id: $id) {\n      id\n      isArchived\n    }\n  }\n": types.ToggleIsArchivedDocument,
+    "\n  mutation DeleteSnippet($id: ID!) {\n    deleteSnippet(id: $id)\n  }\n": types.DeleteSnippetDocument,
 };
 
 /**
@@ -50,6 +52,10 @@ export function graphql(source: "\n  mutation CreateSnippet($content: String!) {
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation ToggleIsArchived($id: ID!) {\n    toggleArchive(id: $id) {\n      id\n      isArchived\n    }\n  }\n"): (typeof documents)["\n  mutation ToggleIsArchived($id: ID!) {\n    toggleArchive(id: $id) {\n      id\n      isArchived\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation DeleteSnippet($id: ID!) {\n    deleteSnippet(id: $id)\n  }\n"): (typeof documents)["\n  mutation DeleteSnippet($id: ID!) {\n    deleteSnippet(id: $id)\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};
