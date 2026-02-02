@@ -14,24 +14,23 @@ import (
 
 // CreateSnippet is the resolver for the createSnippet field.
 func (r *mutationResolver) CreateSnippet(ctx context.Context, content string) (*model.Snippet, error) {
-
 	// DBモデルの作成
 	newSnippet := &database.Snippet{
-		Content: content,
+		Content:    content,
 		IsArchived: false,
 	}
 
 	// DBに保存
 	if err := database.Db.Create(newSnippet).Error; err != nil {
-		return nil,err
+		return nil, err
 	}
-	
+
 	return &model.Snippet{
-		ID: fmt.Sprintf("%d",newSnippet.ID),
-		Content: newSnippet.Content,
+		ID:         fmt.Sprintf("%d", newSnippet.ID),
+		Content:    newSnippet.Content,
 		IsArchived: newSnippet.IsArchived,
-		CreatedAt: newSnippet.CreatedAt.Format("2006-01-02 15:04:05"),
-	},nil
+		CreatedAt:  newSnippet.CreatedAt.Format("2006-01-02 15:04:05"),
+	}, nil
 }
 
 // UpdateSnippet is the resolver for the updateSnippet field.
@@ -46,15 +45,15 @@ func (r *mutationResolver) UpdateSnippet(ctx context.Context, id string, content
 	snippet.Content = content
 	// DBに保存
 	if err := database.Db.Save(&snippet).Error; err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	return &model.Snippet{
-		ID:fmt.Sprintf("%d",snippet.ID),
-		Content: snippet.Content,
+		ID:         fmt.Sprintf("%d", snippet.ID),
+		Content:    snippet.Content,
 		IsArchived: snippet.IsArchived,
-		CreatedAt: snippet.CreatedAt.Format("2006-01-02 15:04:05"),
-	},nil
+		CreatedAt:  snippet.CreatedAt.Format("2006-01-02 15:04:05"),
+	}, nil
 }
 
 // ToggleArchive is the resolver for the toggleArchive field.
@@ -71,35 +70,47 @@ func (r *mutationResolver) ToggleArchive(ctx context.Context, id string) (*model
 
 	// DBに保存
 	if err := database.Db.Save(&snippet).Error; err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	return &model.Snippet{
-		ID:fmt.Sprintf("%d",snippet.ID),
-		Content: snippet.Content,
+		ID:         fmt.Sprintf("%d", snippet.ID),
+		Content:    snippet.Content,
 		IsArchived: snippet.IsArchived,
-		CreatedAt: snippet.CreatedAt.Format("2006-01-02 15:04:05"),
-	},nil
+		CreatedAt:  snippet.CreatedAt.Format("2006-01-02 15:04:05"),
+	}, nil
+}
+
+// DeleteSnippet is the resolver for the deleteSnippet field.
+func (r *mutationResolver) DeleteSnippet(ctx context.Context, id string) (string, error) {
+	var snippet database.Snippet
+
+	// id 指定で削除
+	if err := database.Db.Delete(&snippet, id).Error; err != nil {
+		return "", err
+	}
+
+	return id, nil
 }
 
 // Snippets is the resolver for the snippets field.
 func (r *queryResolver) Snippets(ctx context.Context) ([]*model.Snippet, error) {
 	var dbSnippets []database.Snippet
 
-	if err:= database.Db.Order("created_at desc").Find(&dbSnippets).Error; err !=nil  {
-		return nil,err
+	if err := database.Db.Order("created_at desc").Find(&dbSnippets).Error; err != nil {
+		return nil, err
 	}
 
 	var snippets []*model.Snippet
-	for _,s := range dbSnippets {
+	for _, s := range dbSnippets {
 		snippets = append(snippets, &model.Snippet{
-			ID:fmt.Sprintf("%d",s.ID),
-			Content: s.Content,
+			ID:         fmt.Sprintf("%d", s.ID),
+			Content:    s.Content,
 			IsArchived: s.IsArchived,
-			CreatedAt: s.CreatedAt.Format("2006-01-02 15:04:05"),
+			CreatedAt:  s.CreatedAt.Format("2006-01-02 15:04:05"),
 		})
 	}
-	return snippets,nil
+	return snippets, nil
 }
 
 // Mutation returns MutationResolver implementation.

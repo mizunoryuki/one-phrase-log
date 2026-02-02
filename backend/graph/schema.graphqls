@@ -24,4 +24,7 @@ type Mutation {
 
   # アーカイブ状態を切り替える
   toggleArchive(id: ID!): Snippet!
+
+  # 投稿の削除
+  deleteSnippet(id: ID!): String!
 }

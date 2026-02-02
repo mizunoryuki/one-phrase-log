@@ -35,6 +35,31 @@ func TestCreateSnippet(t *testing.T) {
 	})
 }
 
+func TestDeleteSnippet(t *testing.T) {
+	setupTestDB(t)
+	resolver := &mutationResolver{&Resolver{}}
+	ctx := context.Background()
+
+	// 作成
+	content := "削除テスト用"
+	created, err := resolver.CreateSnippet(ctx,content)
+	if err != nil {
+		t.Fatalf("failed to create test data:%v",err)
+	}
+
+	// 削除
+	t.Run("日記が削除できること", func(t *testing.T) {
+		result,err := resolver.DeleteSnippet(ctx,created.ID)
+		assert.NoError(t, err)
+		assert.Equal(t, created.ID, result,"削除されたIDが一致すること")
+	})
+
+	t.Run("存在しないIDを指定した場合にエラーになること", func(t *testing.T) {
+		_, err := resolver.DeleteSnippet(ctx, "9999")
+		assert.NoError(t, err)
+	})
+}
+
 func TestUpdateAndToggle(t *testing.T){
 	setupTestDB(t)
 	mutResolver := &mutationResolver{&Resolver{}}
