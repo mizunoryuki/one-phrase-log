@@ -107,11 +107,23 @@ function App() {
           {isSubmitting ? "送信中" : "送信"}
         </button>
       </form>
-      <div>
+      <div style={{ width: "800px" }}>
         {data.snippets.map((snippet) => (
-          <div key={snippet.id} style={{ display: "flex" }}>
+          <div
+            key={snippet.id}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "0.5fr 3fr auto auto",
+            }}
+          >
             <p>{snippet.id}</p>
-            <p>{snippet.content}</p>
+            <p
+              style={{
+                textAlign: "left",
+              }}
+            >
+              {snippet.content}
+            </p>
             <input
               style={{
                 cursor: isToggling ? "not-allowed" : "pointer",
