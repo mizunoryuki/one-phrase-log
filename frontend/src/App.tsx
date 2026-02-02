@@ -46,14 +46,24 @@ function App() {
     useMutation(CREATE_SNIPPET);
   const [toggleIsArchived, { loading: isToggling }] =
     useMutation(TOGGLE_IS_ARCHIVED);
-  const [deleteSnippet, { loading: isDeleting }] = useMutation(DELETE_SNIPPET);
+  const [deleteSnippet, { loading: isDeleting }] = useMutation(DELETE_SNIPPET, {
+    update(cache, { data }) {
+      const deletedId = data?.deleteSnippet;
+      if (!deletedId) return;
+
+      const cacheId = cache.identify({ __typename: "Snippet", id: deletedId });
+      cache.evict({ id: cacheId });
+      cache.gc();
+    },
+  });
+
   const handleSubimit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim()) return;
     try {
       await createSnippet({
         variables: { content: inputText },
-        refetchQueries: [GET_SNIPPETS], // 投稿後に再取得して最新にする
+        refetchQueries: [{ query: GET_SNIPPETS }],
       });
       setInputText("");
     } catch (err) {
@@ -70,7 +80,6 @@ function App() {
   const handleDeleteSnippet = (id: string) => {
     deleteSnippet({
       variables: { id },
-      refetchQueries: [GET_SNIPPETS],
     });
   };
 
